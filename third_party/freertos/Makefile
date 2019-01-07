@@ -43,7 +43,6 @@ DEFINES += -DMEMLEAK_DEBUG -DICACHE_FLASH
 INCLUDES := $(INCLUDES) -I $(PDIR)include
 INCLUDES += -I ./
 INCLUDES += -I ../../rom/include
-INCLUDES += -I ../../include/ets
 INCLUDES += -I ./include -I $(PDIR)include/freertos
 PDIR := ../$(PDIR)
 sinclude $(PDIR)Makefile
