@@ -22,15 +22,15 @@
 int ThreadStart(Thread* thread, void (*fn)(void*), void* arg)
 {
     int rc = 0;
-    uint16_t usTaskStackSize = (configMINIMAL_STACK_SIZE * 5);
+    uint16_t usTaskStackSize = (configMINIMAL_STACK_SIZE * 4);
     unsigned portBASE_TYPE uxTaskPriority = uxTaskPriorityGet(NULL); /* set the priority as the same as the calling task*/
 
-    rc = xTaskCreate(fn,    /* The function that implements the task. */
-                     "MQTTTask",         /* Just a text name for the task to aid debugging. */
-                     usTaskStackSize,    /* The stack size is defined in FreeRTOSIPConfig.h. */
-                     arg,                /* The task parameter, not used in this case. */
-                     uxTaskPriority,     /* The priority assigned to the task is defined in FreeRTOSConfig.h. */
-                     &thread->task);     /* The task handle is not used. */
+    rc = xTaskCreate(fn,    			/* The function that implements the task. */
+                     "mqttp",         	/* Just a text name for the task to aid debugging. */
+                     usTaskStackSize,   /* The stack size is defined in FreeRTOSIPConfig.h. */
+                     arg,               /* The task parameter, not used in this case. */
+                     uxTaskPriority,    /* The priority assigned to the task is defined in FreeRTOSConfig.h. */
+                     &thread->task);    /* The task handle is not used. */
 
     return rc;
 }
@@ -278,6 +278,9 @@ static int esp_ssl_read(Network* n, unsigned char* buffer, unsigned int len, uns
 
         n->read_count++;
         *buffer = *(read_buffer + 1);
+		// If length is zero, next read won't be a data read so reset read_count
+		if (*buffer == 0)
+			n->read_count = 0;
         return 1;
     } else if (n->read_count == 2) { /* read same mqtt packet for the third time */
         n->read_count = 0;
