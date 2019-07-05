@@ -57,7 +57,7 @@ int rand(void);
 
 int printf(const char *format, ...);
 int sprintf(char *out, const char *format, ...);
-int snprintf(char *buf, unsigned int count, const char *format, ...);
+int snprintf(char *buf, size_t count, const char *format, ...);
 int puts(const char *str);
 
 void *malloc(size_t n);
