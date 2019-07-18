@@ -54,6 +54,7 @@ typedef struct Mutex {
 void MutexInit(Mutex*);
 int MutexLock(Mutex*);
 int MutexUnlock(Mutex*);
+void MutexFree(Mutex*);
 
 typedef struct Thread {
     xTaskHandle task;
