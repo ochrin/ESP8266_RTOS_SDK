@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 #include <stdio.h>
+#include "freertos/semphr.h"
 
 #define NUM_SYS_FD 3
 
@@ -11,12 +12,24 @@ static u8_t *spiffs_work_buf;
 static u8_t *spiffs_fd_buf;
 static u8_t *spiffs_cache_buf;
 
+static xSemaphoreHandle spiffs_lock;				// Semaphore for spiffs
+
 #define FLASH_UNIT_SIZE 4
+
+void spiffs_api_lock(struct spiffs_t *fs)
+{
+    xSemaphoreTake(*(xQueueHandle*)fs->user_data, portMAX_DELAY);
+}
+
+void spiffs_api_unlock(struct spiffs_t *fs)
+{
+    xSemaphoreGive(*(xQueueHandle*)fs->user_data);
+}
 
 static s32_t esp_spiffs_readwrite(u32_t addr, u32_t size, u8_t *p, int write)
 {
     /*
-     * With proper configurarion spiffs never reads or writes more than
+     * With proper configuration spiffs never reads or writes more than
      * LOG_PAGE_SIZE
      */
 
@@ -99,6 +112,9 @@ s32_t esp_spiffs_init(struct esp_spiffs_config *config)
     cfg.hal_read_f = esp_spiffs_read;
     cfg.hal_write_f = esp_spiffs_write;
     cfg.hal_erase_f = esp_spiffs_erase;
+
+    spiffs_lock = xSemaphoreCreateMutex();
+    fs.user_data = &spiffs_lock;
 
     if (spiffs_work_buf != NULL) {
         free(spiffs_work_buf);
