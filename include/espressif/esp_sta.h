@@ -51,7 +51,7 @@ extern "C" {
 
 struct station_config {
     uint8 ssid[32];         /**< SSID of target AP*/
-    uint8 password[64];     /**< password of target AP*/
+    uint8 password[48];     /**< password of target AP*/
     uint8 bssid_set;        /**< whether set MAC address of target AP or not. Generally, station_config.bssid_set needs to be 0; and it needs to be 1 only when users need to check the MAC address of the AP.*/
     uint8 bssid[6];         /**< MAC address of target AP*/
 };
